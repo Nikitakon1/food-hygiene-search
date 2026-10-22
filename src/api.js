@@ -10,7 +10,7 @@ async function getData(path) {
 export async function getBusinessTypes() {
   const data = await getData('BusinessTypes');
   if (!Array.isArray(data.businessTypes)) throw new Error('Unexpected business types response.');
-  return data.businessTypes;
+  return data.businessTypes.filter(type => type.BusinessTypeId !== -1);
 }
 
 export async function getBusinessDetails(id) {
@@ -24,7 +24,7 @@ export async function getBusinessDetails(id) {
   return { ...business, scoreDescriptors: descriptions.scoreDescriptors };
 }
 
-export async function searchBusinesses(name, address, pageNumber = 1, businessTypeId = '') {
+export async function searchBusinesses({ name, address, businessTypeId }, pageNumber) {
   const query = new URLSearchParams({ name, address, pageNumber, pageSize: 10 });
   if (businessTypeId) query.set('businessTypeId', businessTypeId);
   const data = await getData(`Establishments?${query}`);
